@@ -2,6 +2,8 @@
 
 This workflow automatically scrapes AI-related news from **sonxeber.az** and publishes them to a Telegram channel on a schedule.
 
+<img width="1416" height="925" alt="Screenshot 2026-05-29 221253" src="https://github.com/user-attachments/assets/22b35c5f-b610-46ce-adbe-4df6a38a9079" />
+
 ---
 
 ##  What does it do?
