@@ -1,0 +1,909 @@
+{
+  "name": "AI news agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9-21/2 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        80
+      ],
+      "id": "bef495c8-c68c-4926-8d61-de400dfbb203",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sonxeber.az/search/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "suni intellekt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        -240
+      ],
+      "id": "4db5624a-f5a7-412b-b283-04ecaac6be11",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "data",
+              "cssSelector": "div.nart.artbig",
+              "returnValue": "html",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -240
+      ],
+      "id": "65777b25-d908-4af4-9a61-3bf4cbdf25f6",
+      "name": "HTML6"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "Title",
+              "cssSelector": "h3"
+            },
+            {
+              "key": "Link",
+              "cssSelector": "a.thumb_zoom",
+              "returnValue": "attribute",
+              "attribute": "href"
+            },
+            {
+              "key": "Photo",
+              "cssSelector": "img",
+              "returnValue": "attribute",
+              "attribute": "data-src"
+            },
+            {
+              "key": "Content",
+              "cssSelector": "p.artful"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        -240
+      ],
+      "id": "48c7793b-b37f-417e-ad03-13f1bd5b54fe",
+      "name": "HTML7"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA",
+          "mode": "list",
+          "cachedResultName": "Community Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.Title }}",
+            "Link": "={{ $json.Link }}",
+            "Photo Url": "={{ $json.Photo }}",
+            "Status": "Gozlemede"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Photo Url",
+              "displayName": "Photo Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1216,
+        -240
+      ],
+      "id": "c15c57e5-f24c-4c85-8083-2c7134ee8b2b",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5ifSePTkQzhnGzNd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://sonxeber.az{{ $json.Link }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        544,
+        -240
+      ],
+      "id": "de39d07f-2e5f-44a6-9f4b-da1070ee7218",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "Content",
+              "cssSelector": "article p",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        -240
+      ],
+      "id": "1bef5b35-e6e4-44ac-9be7-d260eb02d7ad",
+      "name": "HTML8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// HTML7 və HTML8 node-larından bütün məlumatları götür\nconst html7items = $('HTML7').all();\nconst html8items = $('HTML8').all();\n\n// İki array uzunluqları fərqli ola bilər, minimum uzunluq qədər işləyək\nconst length = Math.min(html7items.length, html8items.length);\n\nconst results = [];\n\nfor (let i = 0; i < length; i++) {\n  const h7 = html7items[i].json;\n  const h8 = html8items[i].json;\n\n  // Title, Link, Content HTML7-dən\n  const title = h7.Title || `Xəbər ${i + 1}`;\n  const link = h7.Link ? `https://sonxeber.az${h7.Link}` : 'https://sonxeber.az/';\n  \n  const rawContent = h7.Content || [];\n  const joinedContent = Array.isArray(rawContent) ? rawContent.join('\\n') : String(rawContent);\n  const cleanedContent = joinedContent.trim();\n\n  // Photo URL HTML8 Content hissəsindən çıxarılır\n  const h8Content = h8.Content || [];\n  const h8JoinedContent = Array.isArray(h8Content) ? h8Content.join('\\n') : String(h8Content);\n  \n  const photoMatch = h8JoinedContent.match(/\\[\\/Uploads\\/[^\\]]+\\.(jpg|png|jpeg|webp)\\]/i);\n  const photoUrl = photoMatch ? `https://sonxeber.az${photoMatch[0].replace('[', '').replace(']', '')}` : null;\n\n  results.push({\n    json: {\n      ID: `news_${i + 1}_${Date.now()}`,\n      Title: title,\n      Link: link,\n      Photo: photoUrl\n    }\n  });\n}\n\nreturn results; "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        -240
+      ],
+      "id": "72bbf366-4707-416a-9d68-27539450ae89",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -240
+      ],
+      "id": "d61734d5-3bf5-47ce-b850-087194298574",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA",
+          "mode": "list",
+          "cachedResultName": "Community Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -128,
+        80
+      ],
+      "id": "28136457-201d-4590-b23a-93b12fd283ab",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5ifSePTkQzhnGzNd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f190bf7-60bc-4b03-b7c3-cdad8f5026d8",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Gozlemede",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        80
+      ],
+      "id": "432c6c1b-e667-40bf-9a61-03759c8acc0b",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        320,
+        64
+      ],
+      "id": "8f052e7f-b61a-493e-93e5-e93fe790bdf4",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "chatId": "@datascienceecommunity",
+        "text": "={{ $json.Title }}\n\nƏtraflı məlumat üçün linkə daxil olun:\n{{ $json.Link }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        176
+      ],
+      "id": "04cce2eb-896f-4be8-b9d8-0835d6080cbb",
+      "name": "Send a text message",
+      "webhookId": "0684e088-286a-42d8-817d-a09ab680e806",
+      "credentials": {
+        "telegramApi": {
+          "id": "TFqXUzHKOedf7c5c",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "@datascienceecommunity",
+        "binaryData": true,
+        "binaryPropertyName": "=data",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        -16
+      ],
+      "id": "6bd95012-ecbd-4529-bc0e-9ec2223f1e06",
+      "name": "Send a photo message",
+      "webhookId": "881460b3-f327-4d90-8030-e66380043698",
+      "credentials": {
+        "telegramApi": {
+          "id": "TFqXUzHKOedf7c5c",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Photo Url'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        64
+      ],
+      "id": "b6cbd2a1-92b5-4848-926e-e762c8d8dd21",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        400
+      ],
+      "id": "4152bd1b-da03-4ef3-b2d1-5943ac4736d3",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const time = $now;\n\nconst date = `${String(time.c.day).padStart(2, '0')}.${String(time.c.month).padStart(2, '0')}.${time.c.year}`;\nconst hours = `${String(time.c.hour).padStart(2, '0')}:${String(time.c.minute).padStart(2, '0')}`;\n\nconst dates = `${date} ${hours}`;\n\nreturn [\n  {\n    json: {\n      formattedDate: date,\n      formattedTime: hours,\n      fullDateTime: dates\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        176
+      ],
+      "id": "9affba72-3339-4774-8fd1-98be5aeae57f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA",
+          "mode": "list",
+          "cachedResultName": "Community Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -128,
+        400
+      ],
+      "id": "340017ed-4804-48e7-9090-0479c3d4a36d",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5ifSePTkQzhnGzNd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get current date (Baku time assumed via system)\nconst now = new Date();\n\nconst day = String(now.getDate()).padStart(2, '0');\nconst month = String(now.getMonth() + 1).padStart(2, '0');\nconst year = now.getFullYear();\n\nconst formattedDate = `${day}.${month}.${year}`;\n\n// Get items (xeberler)\nconst newsItems = items; // 'Get row(s) in sheet1' node-dan gələn item-lar\n\nconst total = newsItems.length;\n\nlet report = `📰 Community Report (${formattedDate})\\n`;\nreport += `Bu gün ${total} xəbər paylaşıldı:\\n\\n`;\n\nnewsItems.forEach((item, index) => {\n  const title = item.json.Title || 'Başlıq yoxdur';\n  const link = item.json.Link || 'Link yoxdur';\n\n  report += `${index + 1}. ${title}\\n${link}\\n\\n`;\n});\n\nreturn [\n  {\n    json: {\n      report: report.trim()\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        400
+      ],
+      "id": "9eeef9ff-a299-48e6-ace4-726317d38ee7",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "594bdc0d-28f4-49f1-8698-9a7f96d97324",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "=Paylasildi",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "c683e240-20b6-4802-a5d3-61737bcf0570",
+              "leftValue": "={{ $json.formattedDate }}",
+              "rightValue": "={{ $json.formattedDate }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        400
+      ],
+      "id": "2c926e07-4404-4914-a331-6446610bb56a",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const time = $now;\n\nconst date = `${String(time.c.day).padStart(2, '0')}.${String(time.c.month).padStart(2, '0')}.${time.c.year}`;\nconst hours = `${String(time.c.hour).padStart(2, '0')}:${String(time.c.minute).padStart(2, '0')}`;\n\nconst fullDateTime = `${date} ${hours}`;\n\nreturn items.map(item => {\n  return {\n    json: {\n      ...item.json,\n      formattedDate: date,\n      formattedTime: hours,\n      fullDateTime: fullDateTime\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        400
+      ],
+      "id": "8429904f-5dce-4259-907a-a8db4482d612",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "chatId": "@communitymanagement",
+        "text": "={{ $json.report }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        400
+      ],
+      "id": "67831817-b568-4ca7-9df2-c3ee00e7a57d",
+      "name": "Send a text message1",
+      "webhookId": "0684e088-286a-42d8-817d-a09ab680e806",
+      "credentials": {
+        "telegramApi": {
+          "id": "TFqXUzHKOedf7c5c",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA",
+          "mode": "list",
+          "cachedResultName": "Community Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QNZyf7LqSVUAy5rREqHRCq5pPhWHBCxJNFH-f5zS9oA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Paylasildi",
+            "row_number": 0,
+            "Title": "={{ $('Limit').item.json.Title }}",
+            "Link": "={{ $('Limit').item.json.Link }}",
+            "Photo Url": "={{ $('Limit').item.json[\"Photo Url\"] }}",
+            "Paylasilma tarixi": "={{ $json.fullDateTime }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Photo Url",
+              "displayName": "Photo Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Paylasilma tarixi",
+              "displayName": "Paylasilma tarixi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1200,
+        176
+      ],
+      "id": "3ce38f00-d0b7-4c9b-a4ef-272e3fc74cc1",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5ifSePTkQzhnGzNd",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML6": {
+      "main": [
+        [
+          {
+            "node": "HTML7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "HTML6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "HTML8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML8": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "479e0187-a875-46e1-b387-bdc485afe75a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "578dc9104e3890f795d076bc8ee7a7a829684391996c01fe968d5eab9b6193fb"
+  },
+  "id": "MiDQPd26wgugVIeo",
+  "tags": []
+}
